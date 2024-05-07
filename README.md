@@ -3,7 +3,7 @@
         <img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo">
     </a>
     <a href="https://vuejs.org/" target="_blank">
-        <img src="https://vuejs.org/images/logo.svg" width="200" alt="Vue.js Logo">
+        <img src="https://cdn.icon-icons.com/icons2/2415/PNG/512/vuejs_original_wordmark_logo_icon_146305.png" width="200" alt="Vue.js Logo">
     </a>
 </p>
 
