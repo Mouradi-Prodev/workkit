@@ -48,8 +48,8 @@ const showingNavigationDropdown = ref(false);
                         </NavLink>
 
                     </div>
-                    <div class="p-2 dark:text-gray-100 font-semibold  items-center">
-                        <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+                    <div v-if="$page.props.auth.permissions.team.view" class="p-2 dark:text-gray-100 font-semibold  items-center">
+                        <NavLink :href="route('team.index')" :active="route().current('team.index')">
                             Team
                         </NavLink>
 

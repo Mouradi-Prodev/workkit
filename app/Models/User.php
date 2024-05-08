@@ -54,4 +54,17 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Team::class);
     }
+
+    public function getFullName(): string
+    {
+        return $this->name . ' '.$this->last_name;
+    }
+    public function getRole():string
+    {
+        $role = $this->roles[0]->name;
+        if($role == 'admin') return 'Admin';
+        else if($role == 'team_lead') return 'Team Leader';
+        else if($role == 'user') return 'Member';
+        return null;
+    }
 }
