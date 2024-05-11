@@ -11,10 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('teams', function (Blueprint $table) {
+        Schema::create('chat_rooms', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('avatar_path')->nullable();
+            $table->string('slug');
+            $table->foreignId('user_id')->constrained()
+            ->onUpdate('cascade')
+            ->onDelete('cascade');
+            $table->boolean('is_private')->default(true);
             $table->timestamps();
         });
     }
@@ -24,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('teams');
+        Schema::dropIfExists('chat_rooms');
     }
 };

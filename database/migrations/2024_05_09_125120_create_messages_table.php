@@ -11,10 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('teams', function (Blueprint $table) {
+        Schema::create('messages', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('avatar_path')->nullable();
+            $table->foreignId('user_id')->constrained()
+            ->onDelete('cascade')
+            ->onUpdate('cascade');
+
+            
+            $table->foreignId('chat_room_id')->constrained()
+            ->onDelete('cascade')
+            ->onUpdate('cascade');
+            $table->text('content');
             $table->timestamps();
         });
     }
@@ -24,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('teams');
+        Schema::dropIfExists('messages');
     }
 };

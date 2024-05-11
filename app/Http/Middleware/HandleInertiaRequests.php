@@ -39,6 +39,7 @@ class HandleInertiaRequests extends Middleware
                         'view' => $request->user() ? $request->user()->can('view', Team::class) : null,
                     ],
                 ],
+                'team' => $request->user() ? $request->user()->team : null,
             ],
         ];
     }

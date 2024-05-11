@@ -3,21 +3,21 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 
 
-const props = defineProps(['team', 'users'])
-console.log(props.team)
+const props = defineProps([ 'users'])
+
 
 
 const formatDate = (created_at) => {
     const date = new Date(created_at);
    
-    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric',hour:'2-digit' });
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'numeric', day: 'numeric',hour:'2-digit' });
 
 }
 </script>
 
 <template>
 
-    <Head :title="team.name" />
+    <Head :title="$page.props.auth.team.name" />
 
     <AuthenticatedLayout>
         <template #header>
@@ -26,9 +26,7 @@ const formatDate = (created_at) => {
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900 dark:text-gray-100">{{ team.name }}</div>
-                </div>
+               
                 <div class="overflow-x-auto mt-2">
                     <table
                         class="min-w-full divide-y-2 divide-gray-200 bg-white text-sm shadow-sm sm:rounded-lg dark:divide-gray-700 dark:bg-gray-800">
@@ -47,9 +45,6 @@ const formatDate = (created_at) => {
                                 </th>
                                 <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900 dark:text-white">
                                     Created at
-                                </th>
-                                <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900 dark:text-white">
-                                    Salary
                                 </th>
                             </tr>
                         </thead>
@@ -71,7 +66,7 @@ const formatDate = (created_at) => {
                                 <td class="whitespace-nowrap px-4 py-2 text-gray-700 dark:text-gray-200">{{
                                     formatDate(user.created_at) }}</td>
 
-                                <td class="whitespace-nowrap px-4 py-2 text-gray-700 dark:text-gray-200">$120,000</td>
+                             
                             </tr>
 
 

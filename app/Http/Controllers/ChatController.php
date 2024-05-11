@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-
-use Inertia\Inertia;
+use App\Models\ChatRoom;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
-
-class TeamController extends Controller
+class ChatController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,18 +14,33 @@ class TeamController extends Controller
     public function index()
     {
 
-        $user = auth()->user();
-        $team = $user->team;
-        $users = $team->users;
-        foreach($users as $user){
-            $user->fullName = $user->getFullName();
-            $user->role = $user->getRole();
-        }
-        return Inertia::render('Team/View',[
-            'users'=>$users,
+        $chatRooms = auth()->user()->chat_rooms;
+        return Inertia::render('Chat/View', [
+            'chatRooms' => $chatRooms
         ]);
     }
 
+    /**
+     * return messages of the specified chartroom
+     */
+    public function getMessages(ChatRoom $chatroom)
+    {
+        //get chat room by id  
+        //    $chatRoom=auth()->user()->chat_rooms->where('id','=',$id)->first(); 
+
+        if ($chatroom) {
+            //return all message from this chatroom with user who sent it and the time
+            $messages = $chatroom->messages;
+            foreach ($messages as $message) {
+                $message->user = $message->user->name;
+            };
+            return Inertia::render('Chat/View', [
+                'messages' => $messages
+            ]);
+        } else {
+            abort(403, "This isn't your Chat Room");
+        }
+    }
     /**
      * Show the form for creating a new resource.
      */

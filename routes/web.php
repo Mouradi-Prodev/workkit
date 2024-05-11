@@ -1,11 +1,12 @@
 <?php
 
+use App\Models\Team;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\ProfileController;
-use App\Models\Team;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -30,5 +31,13 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth','verified','can:view,App\Models\Team'])->group(function () {
     Route::get('/team',[TeamController::class, 'index'])->name('team.index');
 });
+
+
+Route::resource('chat', ChatController::class)->only([
+    'index', 'show'
+])->middleware(['auth','verified']);
+Route::post('chat/messages/{chatroom}',[ChatController::class, 'getMessages'])
+->name('chat.getMessages')->middleware(['auth','verified',
+'can:view,chatroom']);
 
 require __DIR__.'/auth.php';

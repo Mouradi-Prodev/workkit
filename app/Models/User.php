@@ -5,6 +5,8 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -66,5 +68,16 @@ class User extends Authenticatable
         else if($role == 'team_lead') return 'Team Leader';
         else if($role == 'user') return 'Member';
         return null;
+    }
+
+
+    public function chat_rooms(): BelongsToMany
+    {
+        return $this->belongsToMany(ChatRoom::class)->withTimestamps();
+    }
+
+    public function messages():HasMany
+    {
+        return $this->hasMany(Message::class)->orderBy('created_at');
     }
 }
