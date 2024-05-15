@@ -1,28 +1,51 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, router, usePage } from '@inertiajs/vue3';
 import Rooms from './Rooms.vue';
 import Messages from './Messages.vue';
-import { useForm } from '@inertiajs/vue3'
+import { useForm } from '@inertiajs/vue3';
+import { onMounted, onUnmounted, ref, watch } from 'vue'
 
-const props = defineProps(['chatRooms','messages'])
 
-const chatRooms = props.chatRooms
+const props = defineProps(['chatRooms', 'messages', 'selectedRoomId'])
+
+
+onMounted(()=>{
+    
+    Echo.join(`chat.${props.selectedRoomId}`)
+        .here((users) => {
+            console.log("All users here : "+users.map((user) => user.name));
+        })
+        .joining((user) => {
+            console.log(user.name + " joined");
+        })
+        .leaving((user) => {
+            console.log(user.name + " left");
+        })
+        .listen('MessageSent', (e)=>{
+            console.log("hello");
+        })
+        .error((error) => {
+            console.error(error);
+        });
+    
+   
+})
+onUnmounted(()=>{
+    Echo.leave(`chat.${props.selectedRoomId}`)
+})
+
+
 
 const selectRoom = (chatroom) => {
-
     const form = useForm({
-        chatroom: chatroom
+        selected_room: chatroom.id,
     })
-
-    form.post(route('chat.getMessages', chatroom), {
-        preserveScroll: true,
-        onSuccess: (data) => {
-            console.log("success")
-        }
-    })
-
+    router.get(route('chat.getMessages', form.selected_room))
 }
+
+
+
 </script>
 
 <template>
@@ -39,11 +62,11 @@ const selectRoom = (chatroom) => {
                 <!-- Room List -->
                 <div class="flex flex-row h-[400px] text-semibold dark:text-gray-100">
                     <div class=" shadow-lg sm:rounded-lg  bg-white dark:bg-gray-800">
-                        <Rooms :chatRooms="chatRooms" @selectRoom="selectRoom" />
+                        <Rooms :selectedRoomId="selectedRoomId" :chatRooms="chatRooms" @selectRoom="selectRoom" />
                     </div>
 
                     <div class="ml-4 shadow-lg sm:rounded-lg  bg-white dark:bg-gray-800">
-                        <Messages :messages="messages"/>
+                        <Messages :messages="messages" :selectedRoomId="selectedRoomId" />
                     </div>
 
                 </div>

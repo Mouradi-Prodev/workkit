@@ -80,4 +80,11 @@ class User extends Authenticatable
     {
         return $this->hasMany(Message::class)->orderBy('created_at');
     }
+
+    public function canJoinRoom($chat_room_id)
+    {
+        // Logic to determine if the user can join the chat room
+        // For example, you might check if the user is a member of the chat room
+        return $this->chat_rooms()->where('chat_room_id', $chat_room_id)->exists();
+    }
 }

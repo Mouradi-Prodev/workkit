@@ -18,7 +18,7 @@ class MessagePolicy
 
     public function view(User $user, ChatRoom $chatroom)
     {
-        
+
         $chatroomUser = $user->chat_rooms;
         foreach($chatroomUser as $chat)
         {

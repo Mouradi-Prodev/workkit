@@ -34,10 +34,10 @@ Route::middleware(['auth','verified','can:view,App\Models\Team'])->group(functio
 
 
 Route::resource('chat', ChatController::class)->only([
-    'index', 'show'
+    'index', 'show','store'
 ])->middleware(['auth','verified']);
-Route::post('chat/messages/{chatroom}',[ChatController::class, 'getMessages'])
-->name('chat.getMessages')->middleware(['auth','verified',
-'can:view,chatroom']);
+
+Route::get('chat/messages/{id}',[ChatController::class, 'getMessages'])
+->name('chat.getMessages')->middleware(['auth','verified']);
 
 require __DIR__.'/auth.php';

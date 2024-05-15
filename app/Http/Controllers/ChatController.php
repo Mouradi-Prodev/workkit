@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ChatRoom;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Models\Message;
+use App\Models\ChatRoom;
+use App\Events\MessageSent;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class ChatController extends Controller
 {
@@ -23,23 +26,21 @@ class ChatController extends Controller
     /**
      * return messages of the specified chartroom
      */
-    public function getMessages(ChatRoom $chatroom)
+    public function getMessages(Request $request, $id)
     {
-        //get chat room by id  
-        //    $chatRoom=auth()->user()->chat_rooms->where('id','=',$id)->first(); 
+        $chatroom = ChatRoom::find($id);
+        Gate::authorize('view', $chatroom);
 
-        if ($chatroom) {
-            //return all message from this chatroom with user who sent it and the time
-            $messages = $chatroom->messages;
-            foreach ($messages as $message) {
-                $message->user = $message->user->name;
-            };
-            return Inertia::render('Chat/View', [
-                'messages' => $messages
-            ]);
-        } else {
-            abort(403, "This isn't your Chat Room");
-        }
+        $messages = $chatroom->messages;
+        foreach ($messages as $message) {
+            $message->user = $message->user->name;
+        };
+
+        return Inertia::render('Chat/View', [
+            'messages' => $messages,
+            'chatRooms' => auth()->user()->chat_rooms,
+            'selectedRoomId' => $chatroom->id
+        ]);
     }
     /**
      * Show the form for creating a new resource.
@@ -54,7 +55,11 @@ class ChatController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $message = new Message(['content' => $request['content']]);
+        $message->user_id = auth()->user()->id;
+        $chatroom = ChatRoom::find($request['chat_room_id']);
+        $message = $chatroom->messages()->save($message);
+        //broadcast(new MessageSent($message))->toOthers();
     }
 
     /**
