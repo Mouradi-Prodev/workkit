@@ -4,15 +4,20 @@ import { Head, router, usePage } from '@inertiajs/vue3';
 import Rooms from './Rooms.vue';
 import Messages from './Messages.vue';
 import { useForm } from '@inertiajs/vue3';
-import { onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, onUnmounted, onUpdated, ref } from 'vue'
 
 
 const props = defineProps(['chatRooms', 'messages', 'selectedRoomId'])
 const page = usePage(['user'])
+const messages = ref(props.messages)
 
+onUpdated(()=>{
+    messages.value = props.messages
+})
 onMounted(() => {
     if (props.selectedRoomId) {
 
+        
         Echo.join(`chat.${props.selectedRoomId}`)
             .here((users) => {
                 console.log("All users here : " + users.map((user) => user.name));
@@ -24,7 +29,8 @@ onMounted(() => {
                 console.log(user.name + " left");
             })
             .listen('MessageCreated', (e) => {
-                console.log("data : " + e.message.content)
+                if(e.message.user.id != page.props.auth.user.id)
+                messages.value.push(e.message);
             });
         // Echo.channel(`chat.${props.selectedRoomId}`)
         // .listen('MessageCreated', (e) => {

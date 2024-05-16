@@ -61,8 +61,9 @@ class ChatController extends Controller
         $message->user_id = auth()->user()->id;
         $chatroom = ChatRoom::find($request['chat_room_id']);
         $message = $chatroom->messages()->save($message);
-       
-        MessageCreated::dispatch($message);
+        $message->user = $message->user->name;
+        // MessageCreated::dispatch($message);
+        broadcast(new MessageCreated($message))->toOthers();
     }
 
     /**

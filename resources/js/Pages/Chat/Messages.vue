@@ -1,7 +1,7 @@
 <script setup>
 import { useForm } from '@inertiajs/vue3';
 import { Send, DotIcon } from 'lucide-vue-next';
-import { onMounted, nextTick, watch, onUnmounted, ref } from 'vue';
+import { onMounted, nextTick, watch, onUnmounted, ref, onUpdated } from 'vue';
 import { initFlowbite } from 'flowbite'
 const props = defineProps(['messages', 'selectedRoomId'])
 
@@ -26,6 +26,10 @@ const scrollToBottom = () => {
         console.log("Scroll ref is null or undefined.");
     }
 };
+
+onUpdated(()=>{
+    scrollToBottom();
+})
 onMounted(() => {
     initFlowbite();
 
