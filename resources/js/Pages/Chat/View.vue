@@ -12,33 +12,31 @@ const page = usePage(['user'])
 
 onMounted(() => {
     if (props.selectedRoomId) {
+
         Echo.join(`chat.${props.selectedRoomId}`)
             .here((users) => {
                 console.log("All users here : " + users.map((user) => user.name));
             })
-            
             .joining((user) => {
                 console.log(user.name + " joined");
             })
             .leaving((user) => {
                 console.log(user.name + " left");
             })
-
-            .error((error) => {
-                console.error(error);
+            .listen('MessageCreated', (e) => {
+                console.log("data : " + e.message.content)
             });
-
-        const id = ref(page.props.auth.user.id)
-   
-       
-           
+        // Echo.channel(`chat.${props.selectedRoomId}`)
+        // .listen('MessageCreated', (e) => {
+        //     console.log("data : " + e.message.content)
+        // })
     }
 
 
 
 })
 onUnmounted(() => {
-    Echo.leave(`chat.${props.selectedRoomId}`)
+    Echo.leave(`chat.${props.selectedRoomId}`);
 })
 
 

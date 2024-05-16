@@ -62,7 +62,7 @@ class ChatController extends Controller
         $chatroom = ChatRoom::find($request['chat_room_id']);
         $message = $chatroom->messages()->save($message);
        
-        SendMessage::dispatch($message);
+        MessageCreated::dispatch($message);
     }
 
     /**

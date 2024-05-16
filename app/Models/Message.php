@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\MessageCreated;
 use App\Events\MessageSent;
 use Illuminate\Database\Eloquent\BroadcastsEvents;
 use Illuminate\Database\Eloquent\Model;
@@ -11,10 +12,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Message extends Model
 {
-    use HasFactory;
+    use HasFactory, BroadcastsEvents;
     protected $fillable = [
         'content'
     ];
+    // protected $dispatchesEvents = [
+    //     'created' => MessageCreated::class
+    // ];
   
   
   

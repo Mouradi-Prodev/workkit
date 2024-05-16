@@ -18,10 +18,10 @@ const form = useForm({
 const scrolll = ref(null);
 
 const scrollToBottom = () => {
-    console.log("Scrolling to bottom...");
-    console.log("Scroll ref:", scrolll.value);
+    // console.log("Scrolling to bottom...");
+    // console.log("Scroll ref:", scrolll.value);
     if (scrolll.value) {
-        scrolll.value.scrollIntoView({ behavior: "smooth" });
+        scrolll.value.scrollIntoView();
     } else {
         console.log("Scroll ref is null or undefined.");
     }
@@ -31,10 +31,8 @@ onMounted(() => {
 
     if (props.selectedRoomId) {
 
-        Echo.connect()
-        Echo.private(`channel_for_everyone`).listen('GotMessage', (e) => {
-            console.log("hey");
-        })
+       
+       
 
         nextTick(() => {
 
@@ -66,6 +64,7 @@ const sendMessage = (content) => {
     f.post(route('chat.store'), {
         onSuccess: () => {
             form.reset()
+            scrollToBottom();
         }
     })
 }
