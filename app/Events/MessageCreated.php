@@ -11,17 +11,22 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class MessageSent implements ShouldBroadcast
+class MessageCreated implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $message;
+
+
+    
     /**
      * Create a new event instance.
+     * 
      */
-    public function __construct(Message $message)
+
+
+    public function __construct(private Message $message)
     {
-        $this->message = $message;
+        //
     }
 
     /**
@@ -29,8 +34,15 @@ class MessageSent implements ShouldBroadcast
      *
      * @return array<int, \Illuminate\Broadcasting\Channel>
      */
-    public function broadcastOn()
+    public function broadcastOn(): array
     {
-        return new PresenceChannel('chat.'.$this->message->chat_room_id);
+       
+        return [
+            new Channel('chat.' . $this->message->chat_room_id),
+        ];
+    }
+    public function broadcastwith()
+    {
+        return [ 'message' => $this->message];
     }
 }

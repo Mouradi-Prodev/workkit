@@ -7,6 +7,8 @@ use App\Models\Message;
 use App\Models\ChatRoom;
 use App\Events\MessageSent;
 use Illuminate\Http\Request;
+use App\Events\MessageCreated;
+use App\Jobs\SendMessage;
 use Illuminate\Support\Facades\Gate;
 
 class ChatController extends Controller
@@ -59,7 +61,8 @@ class ChatController extends Controller
         $message->user_id = auth()->user()->id;
         $chatroom = ChatRoom::find($request['chat_room_id']);
         $message = $chatroom->messages()->save($message);
-        //broadcast(new MessageSent($message))->toOthers();
+       
+        SendMessage::dispatch($message);
     }
 
     /**

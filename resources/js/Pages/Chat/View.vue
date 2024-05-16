@@ -4,34 +4,40 @@ import { Head, router, usePage } from '@inertiajs/vue3';
 import Rooms from './Rooms.vue';
 import Messages from './Messages.vue';
 import { useForm } from '@inertiajs/vue3';
-import { onMounted, onUnmounted, ref, watch } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 
 
 const props = defineProps(['chatRooms', 'messages', 'selectedRoomId'])
+const page = usePage(['user'])
 
+onMounted(() => {
+    if (props.selectedRoomId) {
+        Echo.join(`chat.${props.selectedRoomId}`)
+            .here((users) => {
+                console.log("All users here : " + users.map((user) => user.name));
+            })
+            
+            .joining((user) => {
+                console.log(user.name + " joined");
+            })
+            .leaving((user) => {
+                console.log(user.name + " left");
+            })
 
-onMounted(()=>{
-    
-    Echo.join(`chat.${props.selectedRoomId}`)
-        .here((users) => {
-            console.log("All users here : "+users.map((user) => user.name));
-        })
-        .joining((user) => {
-            console.log(user.name + " joined");
-        })
-        .leaving((user) => {
-            console.log(user.name + " left");
-        })
-        .listen('MessageSent', (e)=>{
-            console.log("hello");
-        })
-        .error((error) => {
-            console.error(error);
-        });
-    
+            .error((error) => {
+                console.error(error);
+            });
+
+        const id = ref(page.props.auth.user.id)
    
+       
+           
+    }
+
+
+
 })
-onUnmounted(()=>{
+onUnmounted(() => {
     Echo.leave(`chat.${props.selectedRoomId}`)
 })
 

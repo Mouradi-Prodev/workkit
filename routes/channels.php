@@ -12,4 +12,6 @@ Broadcast::channel('chat.{chat_room_id}', function (User $user, int $chat_room_i
         return ['id' => $user->id, 'name' => $user->name];
      }
 });
-
+Broadcast::channel('channel_for_everyone', function ($user) {
+    return true;
+});

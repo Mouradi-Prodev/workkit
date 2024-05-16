@@ -1,18 +1,59 @@
 <script setup>
 import { useForm } from '@inertiajs/vue3';
 import { Send, DotIcon } from 'lucide-vue-next';
-import { onMounted, nextTick, watch } from 'vue';
+import { onMounted, nextTick, watch, onUnmounted, ref } from 'vue';
 import { initFlowbite } from 'flowbite'
 const props = defineProps(['messages', 'selectedRoomId'])
 
 
+
+
+// const scrollToBottom = () => {
+//     scroll.current.scrollIntoView({ behavior: "smooth" });
+// };
+
 const form = useForm({
     content: ''
 })
+const scrolll = ref(null);
+
+const scrollToBottom = () => {
+    console.log("Scrolling to bottom...");
+    console.log("Scroll ref:", scrolll.value);
+    if (scrolll.value) {
+        scrolll.value.scrollIntoView({ behavior: "smooth" });
+    } else {
+        console.log("Scroll ref is null or undefined.");
+    }
+};
 onMounted(() => {
     initFlowbite();
-    var scroll = document.getElementsByClassName('scroll')[0]
-    scroll.scrollTop = scroll.scrollHeight
+
+    if (props.selectedRoomId) {
+
+        Echo.connect()
+        Echo.private(`channel_for_everyone`).listen('GotMessage', (e) => {
+            console.log("hey");
+        })
+
+        nextTick(() => {
+
+            scrollToBottom();
+            
+        })
+        
+
+
+    }
+
+    // var scroll = document.getElementsByClassName('scroll')[0]
+    // scroll.scrollTop = scroll.scrollHeight
+
+
+})
+
+onUnmounted(() => {
+    Echo.leave('channel_for_everyone')
 })
 
 const sendMessage = (content) => {
@@ -34,7 +75,7 @@ const sendMessage = (content) => {
 
 <template>
     <div class="flex flex-col w-[550px] max-h-[400px]">
-        <div class="flex overflow-auto flex-col scroll-smooth scroll   pb-14">
+        <div class="flex overflow-auto flex-col scroll-smooth    pb-14" ref="scroll">
             <div v-for="message in messages">
                 <div class="flex  gap-2.5 ">
                     <img class="w-8 h-8 rounded-full"
@@ -89,6 +130,7 @@ const sendMessage = (content) => {
                     </div>
                 </div>
             </div>
+            <span ref="scrolll"></span>
         </div>
         <div v-if="messages" class="" @submit.prevent="sendMessage(form.content)">
             <form class="max-w-xs mx-auto">

@@ -2,7 +2,8 @@
 
 namespace App\Models;
 
-
+use App\Events\MessageSent;
+use Illuminate\Database\Eloquent\BroadcastsEvents;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,7 +15,7 @@ class Message extends Model
     protected $fillable = [
         'content'
     ];
-
+  
   
   
   
