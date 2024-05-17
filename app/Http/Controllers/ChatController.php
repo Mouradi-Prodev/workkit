@@ -57,13 +57,17 @@ class ChatController extends Controller
      */
     public function store(Request $request)
     {
+        //who ever can see the chatroom can send a message in it : 
+        $chatroom = ChatRoom::find($request['chat_room_id']);
+        Gate::authorize('view', $chatroom);
+
+
         $message = new Message(['content' => $request['content']]);
         $message->user_id = auth()->user()->id;
-        $chatroom = ChatRoom::find($request['chat_room_id']);
         $message = $chatroom->messages()->save($message);
         $message->user = $message->user->name;
-        // MessageCreated::dispatch($message);
-        broadcast(new MessageCreated($message))->toOthers();
+        MessageCreated::dispatch($message);
+        // broadcast(new MessageCreated($message))->toOthers();
     }
 
     /**

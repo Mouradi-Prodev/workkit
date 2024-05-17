@@ -11,13 +11,13 @@ const props = defineProps(['chatRooms', 'messages', 'selectedRoomId'])
 const page = usePage(['user'])
 const messages = ref(props.messages)
 
-onUpdated(()=>{
+onUpdated(() => {
     messages.value = props.messages
 })
 onMounted(() => {
     if (props.selectedRoomId) {
 
-        
+
         Echo.join(`chat.${props.selectedRoomId}`)
             .here((users) => {
                 console.log("All users here : " + users.map((user) => user.name));
@@ -29,8 +29,8 @@ onMounted(() => {
                 console.log(user.name + " left");
             })
             .listen('MessageCreated', (e) => {
-                if(e.message.user.id != page.props.auth.user.id)
-                messages.value.push(e.message);
+                if (e.message.user.id != page.props.auth.user.id)
+                    messages.value.push(e.message);
             });
     }
 
@@ -72,7 +72,9 @@ const selectRoom = (chatroom) => {
                     </div>
 
                     <div class="ml-4 shadow-lg sm:rounded-lg  bg-white dark:bg-gray-800">
-                        <Messages :messages="messages" :selectedRoomId="selectedRoomId" />
+                        <Transition appear>
+                            <Messages :messages="messages" :selectedRoomId="selectedRoomId" />
+                        </Transition>
                     </div>
 
                 </div>
