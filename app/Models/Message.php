@@ -12,13 +12,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Message extends Model
 {
-    use HasFactory, BroadcastsEvents;
+    use HasFactory;
     protected $fillable = [
         'content'
     ];
-    // protected $dispatchesEvents = [
-    //     'created' => MessageCreated::class
-    // ];
+ 
   
   
   

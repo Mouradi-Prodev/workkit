@@ -32,10 +32,6 @@ onMounted(() => {
                 if(e.message.user.id != page.props.auth.user.id)
                 messages.value.push(e.message);
             });
-        // Echo.channel(`chat.${props.selectedRoomId}`)
-        // .listen('MessageCreated', (e) => {
-        //     console.log("data : " + e.message.content)
-        // })
     }
 
 

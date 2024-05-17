@@ -5,16 +5,6 @@ import { onMounted, nextTick, watch, onUnmounted, ref, onUpdated } from 'vue';
 import { initFlowbite } from 'flowbite'
 const props = defineProps(['messages', 'selectedRoomId'])
 
-
-
-
-// const scrollToBottom = () => {
-//     scroll.current.scrollIntoView({ behavior: "smooth" });
-// };
-
-const form = useForm({
-    content: ''
-})
 const scrolll = ref(null);
 
 const scrollToBottom = () => {
@@ -28,55 +18,36 @@ const scrollToBottom = () => {
 };
 
 onUpdated(()=>{
+    initFlowbite();
     scrollToBottom();
 })
 onMounted(() => {
     initFlowbite();
 
     if (props.selectedRoomId) {
-
-       
-       
-
         nextTick(() => {
-
             scrollToBottom();
-            
         })
-        
-
-
     }
+});
 
-    // var scroll = document.getElementsByClassName('scroll')[0]
-    // scroll.scrollTop = scroll.scrollHeight
+const form = useForm({
+    chat_room_id: props.selectedRoomId,
+    content: ''
+});
 
-
-})
-
-onUnmounted(() => {
-    Echo.leave('channel_for_everyone')
-})
-
-const sendMessage = (content) => {
-
-    const f = useForm({
-        chat_room_id: props.selectedRoomId,
-        content: content,
-    })
-
-    f.post(route('chat.store'), {
+const sendMessage = () => {
+    form.post(route('chat.store'), {
         onSuccess: () => {
             form.reset()
             scrollToBottom();
         }
     })
 }
-
-
 </script>
 
 <template>
+    
     <div class="flex flex-col w-[550px] max-h-[400px]">
         <div class="flex overflow-auto flex-col scroll-smooth    pb-14" ref="scroll">
             <div v-for="message in messages">
@@ -135,43 +106,24 @@ const sendMessage = (content) => {
             </div>
             <span ref="scrolll"></span>
         </div>
-        <div v-if="messages" class="" @submit.prevent="sendMessage(form.content)">
-            <form class="max-w-xs mx-auto">
-
+        <div v-if="messages">
+           
                 <div class="relative flex z-0">
-                    <input type="text" id="message" v-model="form.content"
+                    <textarea type="text" id="message" v-model="form.content" 
                         class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                        placeholder=" " />
+                        placeholder=" " >
+                        </textarea>
+                        
                     <label for="message"
                         class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
                         message
                     </label>
-                    <button type="submit" v-if="form.content">
+                    <button @click="sendMessage()"  :class="{ 'opacity-25': form.processing }" :disabled="form.processing"  v-if="form.content">
                         <Send />
                     </button>
                 </div>
-            </form>
+           
         </div>
-
-
     </div>
 
-
-
 </template>
-
-<style>
-@keyframes growShrink {
-    0% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.1);
-    }
-
-    100% {
-        transform: scale(1);
-    }
-}
-</style>
