@@ -6,7 +6,7 @@ import { initFlowbite } from 'flowbite'
 const props = defineProps(['messages', 'selectedRoomId'])
 
 const scrolll = ref(null);
-
+const messages = ref(props.messages)
 const scrollToBottom = () => {
     // console.log("Scrolling to bottom...");
     // console.log("Scroll ref:", scrolll.value);
@@ -17,7 +17,8 @@ const scrollToBottom = () => {
     }
 };
 
-onUpdated(()=>{
+onUpdated(() => {
+
     initFlowbite();
     scrollToBottom();
 })
@@ -31,26 +32,47 @@ onMounted(() => {
     }
 });
 
-const form = useForm({
-    chat_room_id: props.selectedRoomId,
-    content: ''
-});
+const content = ref('')
+const processing = ref(false)
+const sendMessage = async () => {
+    if (content.value.length > 0) {
+        processing.value = true;
+        await axios.post(route('chat.store'), {
+            content: content.value,
+            chat_room_id: props.selectedRoomId
+        })
+            .then((data) => {
+                scrollToBottom();
+                content.value = ''
+                messages.value.push(data.data);
+                processing.value = false;
+            })
+    }
 
-const sendMessage = () => {
-    form.post(route('chat.store'), {
-        onSuccess: () => {
-            form.reset()
-            scrollToBottom();
-        }
-    })
+
+
+    // form.post(route('chat.store'), {
+    //     onSuccess: () => {
+    //         form.reset()
+    //         scrollToBottom();
+    //     }
+    // })
+}
+
+
+const formatDate = (created_at) => {
+    const date = new Date(created_at);
+   
+    return date.toLocaleDateString('en-US', {hour:'2-digit', minute:'2-digit'});
+
 }
 </script>
 
 <template>
-    
+
     <div class="flex flex-col w-[550px] max-h-[400px]">
         <div class="flex overflow-auto flex-col scroll-smooth    pb-14" ref="scroll">
-            <div v-for="message in messages">
+            <div v-for="message in messages" class="fade-in">
                 <div class="flex  gap-2.5 ">
                     <img class="w-8 h-8 rounded-full"
                         src="https://flowbite.com/docs/images/people/profile-picture-3.jpg" alt="Jese image">
@@ -58,7 +80,7 @@ const sendMessage = () => {
                         <div class="flex items-center space-x-2 rtl:space-x-reverse">
                             <span class="text-sm font-semibold text-gray-900 dark:text-white">{{ message.user.name
                                 }}</span>
-                            <span class="text-sm font-normal text-gray-500 dark:text-gray-400">11:46</span>
+                            <span class="text-sm font-normal text-gray-500 dark:text-gray-400">{{ formatDate(message.created_at) }}</span>
                             <span v-if="message.user_id == $page.props.auth.user.id"
                                 class="text-gray-500 dark:text-gray-400">
                                 <DotIcon color="green" size="40px" />
@@ -107,22 +129,24 @@ const sendMessage = () => {
             <span ref="scrolll"></span>
         </div>
         <div v-if="messages">
-           
+            <div class="max-w-sm mx-auto">
                 <div class="relative flex z-0">
-                    <textarea type="text" id="message" v-model="form.content" 
+                    <input type="text" id="content" name="content" v-model="content"
                         class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                        placeholder=" " >
-                        </textarea>
-                        
+                        placeholder=" "
+                        v-on:keyup.enter="sendMessage" />
+
+
                     <label for="message"
                         class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
                         message
                     </label>
-                    <button @click="sendMessage()"  :class="{ 'opacity-25': form.processing }" :disabled="form.processing"  v-if="form.content">
+                    <button @click="sendMessage()"  :class="{ 'opacity-25': processing }" :disabled="processing"
+                        v-if="content">
                         <Send />
                     </button>
                 </div>
-           
+            </div>
         </div>
     </div>
 

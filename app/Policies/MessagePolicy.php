@@ -19,12 +19,9 @@ class MessagePolicy
     public function view(User $user, ChatRoom $chatroom)
     {
         return $user->chat_rooms()->where(['chat_room_id' => $chatroom->id])->exists();
-        // $chatroomUser = $user->chat_rooms;
-        // foreach($chatroomUser as $chat)
-        // {
-        //     if($chat->id == $chatroom->id) return true;
-        // }
-        // return false;
-        
+    }
+    public function create(User $user): bool
+    {
+        return $user->hasRole('team_lead');
     }
 }

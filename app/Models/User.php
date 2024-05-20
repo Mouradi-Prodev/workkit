@@ -76,6 +76,11 @@ class User extends Authenticatable
         return $this->belongsToMany(ChatRoom::class)->withTimestamps();
     }
 
+    public function chat_room(): HasMany
+    {
+        return $this->hasMany(ChatRoom::class);
+    }
+
     public function messages():HasMany
     {
         return $this->hasMany(Message::class)->orderBy('created_at');

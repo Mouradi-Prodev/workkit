@@ -3,8 +3,9 @@
 namespace App\Http\Middleware;
 
 use App\Models\Team;
-use Illuminate\Http\Request;
 use Inertia\Middleware;
+use App\Models\ChatRoom;
+use Illuminate\Http\Request;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -38,6 +39,9 @@ class HandleInertiaRequests extends Middleware
                     'team' => [
                         'view' => $request->user() ? $request->user()->can('view', Team::class) : null,
                     ],
+                    'chatroom' =>[
+                        'create' => $request->user() ? $request->user()->can('create', ChatRoom::class) : null,
+                    ]
                 ],
                 'team' => $request->user() ? $request->user()->team : null,
             ],

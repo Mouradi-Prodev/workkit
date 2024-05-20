@@ -39,5 +39,7 @@ Route::resource('chat', ChatController::class)->only([
 
 Route::get('chat/messages/{id}',[ChatController::class, 'getMessages'])
 ->name('chat.getMessages')->middleware(['auth','verified']);
+Route::post('chatroom',[ChatController::class, 'createChatRoom'])
+->name('chatroom.create')->middleware(['auth','verified']);
 
 require __DIR__.'/auth.php';

@@ -16,7 +16,9 @@ class Message extends Model
     protected $fillable = [
         'content'
     ];
- 
+    // protected $dispatchesEvents = [
+    //     'created' => MessageCreated::class
+    // ];
   
   
   

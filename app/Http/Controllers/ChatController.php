@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use Inertia\Inertia;
 use App\Models\Message;
 use App\Models\ChatRoom;
+use App\Jobs\SendMessage;
 use App\Events\MessageSent;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Events\MessageCreated;
-use App\Jobs\SendMessage;
 use Illuminate\Support\Facades\Gate;
+use App\Http\Requests\ChatRoomRequest;
 
 class ChatController extends Controller
 {
@@ -35,7 +37,7 @@ class ChatController extends Controller
 
         $messages = $chatroom->messages;
         foreach ($messages as $message) {
-            $message->user = $message->user->name;
+            $message->user = $message->user;
         };
 
         return Inertia::render('Chat/View', [
@@ -67,7 +69,23 @@ class ChatController extends Controller
         $message = $chatroom->messages()->save($message);
         $message->user = $message->user->name;
         MessageCreated::dispatch($message);
+        return $message;
+
         // broadcast(new MessageCreated($message))->toOthers();
+    }
+
+    public function createChatRoom(ChatRoomRequest $request)
+    {
+        $slug = Str::slug($request->name);
+        $user = $request->user();
+        $chatRoom = new ChatRoom();
+        $chatRoom->name = $request->name;
+        $chatRoom->slug = $slug;
+        $chatRoom->user_id = $user->id;
+        $chatRoom->save();
+        $chatRoom->users()->attach($user);
+        //$user->chat_rooms()->attach($chatRoom); second method
+        
     }
 
     /**

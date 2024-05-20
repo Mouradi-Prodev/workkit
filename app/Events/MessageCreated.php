@@ -37,6 +37,7 @@ class MessageCreated implements ShouldBroadcast
 
     public function broadcastWith()
     {
+        $this->message->user = $this->message->user->name;
         return [
             'message' => $this->message,
         ];

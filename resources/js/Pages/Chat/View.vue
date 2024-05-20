@@ -60,28 +60,30 @@ const selectRoom = (chatroom) => {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Chat</h2>
+            <h2 class="font-semibold text-xl fade-in text-gray-800 dark:text-gray-200 leading-tight">Chat</h2>
         </template>
 
-        <div class="py-12">
-            <div class="flex max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="py-1">
+            <div class="flex max-w-7xl mx-auto sm:px-1 2xl:px-8">
                 <!-- Room List -->
                 <div class="flex flex-row h-[400px] text-semibold dark:text-gray-100">
-                    <div class=" shadow-lg sm:rounded-lg  bg-white dark:bg-gray-800">
+                    <div class="shadow-lg sm:rounded-lg  bg-white dark:bg-gray-800">
                         <Rooms :selectedRoomId="selectedRoomId" :chatRooms="chatRooms" @selectRoom="selectRoom" />
                     </div>
-
-                    <div class="ml-4 shadow-lg sm:rounded-lg  bg-white dark:bg-gray-800">
-                        <Transition appear>
+                   
+                        <div 
+                         class="ml-4 shadow-lg sm:rounded-lg fade-in  bg-white dark:bg-gray-800">
                             <Messages :messages="messages" :selectedRoomId="selectedRoomId" />
-                        </Transition>
-                    </div>
+                        </div>
+                        <div>
+                            hello
+                        </div>
+                   
 
                 </div>
-
-
             </div>
         </div>
 
     </AuthenticatedLayout>
 </template>
+
